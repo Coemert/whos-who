@@ -279,7 +279,7 @@ function submitVotes(code, voterId, assignments) {
 
   if (allVoted) {
     computeResults(lobby);
-    lobby.phase = 'REVEAL';
+    // Phase advance is handled by the server after emitting reveal:data for history
   }
 
   return { lobby, allVoted };
@@ -312,10 +312,8 @@ function computeResults(lobby) {
     };
   });
 
-  // Ascending: most surprising (low %) revealed first, most obvious (high %) last
   results.sort((a, b) => a.correctPercentage - b.correctPercentage);
   round.results = results;
-  round.revealIndex = -1;
 }
 
 
@@ -400,8 +398,8 @@ function kickPlayer(code, hostId, targetPlayerId) {
       const allVoted = connected.every((p) => round.votes.find((v) => v.voterId === p.id));
       if (allVoted) {
         computeResults(lobby);
-        lobby.phase = 'REVEAL';
         advancedRevealData = revealPayload(lobby);
+        // Phase advance (ANSWERING or ENDED) handled by server after emitting reveal:data
       }
     }
   }

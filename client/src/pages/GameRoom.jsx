@@ -5,7 +5,6 @@ import { socket } from '../socket';
 import LobbyWait from '../phases/LobbyWait';
 import Answering  from '../phases/Answering';
 import Voting     from '../phases/Voting';
-import Reveal     from '../phases/Reveal';
 import EndScreen  from '../phases/EndScreen';
 
 export default function GameRoom() {
@@ -49,7 +48,6 @@ export default function GameRoom() {
       {phase === 'LOBBY'     && <LobbyWait />}
       {phase === 'ANSWERING' && <Answering />}
       {phase === 'VOTING'    && <Voting />}
-      {phase === 'REVEAL'    && <Reveal />}
       {phase === 'ENDED'     && <EndScreen />}
     </>
   );

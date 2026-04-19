@@ -221,7 +221,11 @@ io.on('connection', (socket) => {
       push(r.lobby.code, 'voting:data', r.advancedVotingData);
       broadcastAnswerIds(r.lobby);
     }
-    if (r.advancedRevealData) push(r.lobby.code, 'reveal:data', r.advancedRevealData);
+    if (r.advancedRevealData) {
+      push(r.lobby.code, 'reveal:data', r.advancedRevealData);
+      const adv = gs.nextQuestion(r.lobby.code);
+      if (!adv.error) pushLobby(adv.lobby);
+    }
   });
 
   // ── Answering phase ───────────────────────────────────────────────────────
@@ -250,8 +254,12 @@ io.on('connection', (socket) => {
     pushLobby(r.lobby);
 
     if (r.allVoted) {
+      // Emit results for client history accumulation (end screen), then skip straight past reveal
       const rp = gs.revealPayload(r.lobby);
       if (rp) push(r.lobby.code, 'reveal:data', rp);
+
+      const adv = gs.nextQuestion(r.lobby.code);
+      if (!adv.error) pushLobby(adv.lobby);
     }
   });
 
