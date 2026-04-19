@@ -255,13 +255,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // ── Reveal phase ──────────────────────────────────────────────────────────
-  socket.on('reveal:next', ({ code } = {}) => {
-    const r = gs.nextReveal(code);
-    if (r.error) return fail(r.error);
-    pushLobby(r.lobby);
-  });
-
   // ── Disconnect ────────────────────────────────────────────────────────────
   socket.on('disconnect', () => {
     const r = gs.detachSocket(socket.id);

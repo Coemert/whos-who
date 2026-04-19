@@ -279,7 +279,7 @@ export default function Voting() {
             marginBottom: '1.5rem',
           }}
         >
-          {players.map((p, i) => {
+          {players.filter((p) => p.id !== myPlayerId).map((p, i) => {
             const isDropTarget     = dragOverPlayerId === p.id;
             const hasAssignment    = Object.values(assignments).includes(p.id);
             const isSelectionReady = !!selectedId && !submitted;

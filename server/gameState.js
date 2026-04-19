@@ -193,7 +193,6 @@ function newRound(lobby, qIndex) {
     votes: [],           // { voterId, assignments: { [answerId]: playerId } }
     duplicateGroups: [], // [[playerId, playerId], ...]
     results: null,       // computed after all voted
-    revealIndex: -1,
   };
 }
 
@@ -319,13 +318,6 @@ function computeResults(lobby) {
   round.revealIndex = -1;
 }
 
-function nextReveal(code) {
-  const lobby = lobbies.get(code);
-  if (!lobby || lobby.phase !== 'REVEAL') return { error: 'Not in reveal phase.' };
-  const round = lobby.currentRound;
-  round.revealIndex = Math.min(round.revealIndex + 1, round.results.length - 1);
-  return { lobby, allRevealed: round.revealIndex >= round.results.length - 1 };
-}
 
 function nextQuestion(code) {
   const lobby = lobbies.get(code);
@@ -444,7 +436,6 @@ function clientView(lobby) {
     currentQuestionIndex: lobby.currentQuestionIndex,
     totalQuestions: lobby.questions.length,
     currentQuestion: lobby.currentRound?.question || null,
-    revealIndex: lobby.currentRound?.revealIndex ?? -1,
   };
 
   if (lobby.phase === 'LOBBY') {
@@ -508,7 +499,6 @@ module.exports = {
   submitAnswer,
   forceNextPhase,
   submitVotes,
-  nextReveal,
   nextQuestion,
   endGame,
   backToLobby,

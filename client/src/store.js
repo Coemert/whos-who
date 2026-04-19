@@ -12,9 +12,10 @@ export const useStore = create(
 
       // ── Ephemeral game state ────────────────────────────────────────────────
       lobby: null,
-      votingData: null,   // { answers: [{answerId, text}], players: [{id, name}] }
-      revealData: null,   // { question, results: [...] }
-      myAnswerId: null,   // the answerId that belongs to this player (hidden in voting UI)
+      votingData: null,    // { answers: [{answerId, text}], players: [{id, name}] }
+      revealData: null,    // { question, results: [...] } — current question only
+      revealHistory: [],   // accumulated across all questions for the end summary
+      myAnswerId: null,    // the answerId that belongs to this player (hidden in voting UI)
 
       // ── Actions ─────────────────────────────────────────────────────────────
       setTheme: (theme) => set({ theme }),
@@ -24,11 +25,18 @@ export const useStore = create(
 
       setLobby: (lobby) => set({ lobby }),
       setVotingData: (votingData) => set({ votingData }),
-      setRevealData: (revealData) => set({ revealData }),
+      setRevealData: (revealData) => set((state) => ({
+        revealData,
+        // Append to history only if this question isn't already recorded
+        revealHistory: state.revealHistory.find((r) => r.question.id === revealData.question.id)
+          ? state.revealHistory
+          : [...state.revealHistory, revealData],
+      })),
       setMyAnswerId: (myAnswerId) => set({ myAnswerId }),
+      clearRevealHistory: () => set({ revealHistory: [] }),
 
       clearGame: () =>
-        set({ lobby: null, votingData: null, revealData: null, myAnswerId: null }),
+        set({ lobby: null, votingData: null, revealData: null, revealHistory: [], myAnswerId: null }),
 
       clearSession: () =>
         set({
@@ -38,6 +46,7 @@ export const useStore = create(
           lobby: null,
           votingData: null,
           revealData: null,
+          revealHistory: [],
           myAnswerId: null,
         }),
     }),

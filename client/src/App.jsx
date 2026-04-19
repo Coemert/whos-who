@@ -16,6 +16,7 @@ export default function App() {
     setVotingData,
     setRevealData,
     setMyAnswerId,
+    clearRevealHistory,
   } = useStore();
 
   // Apply theme attribute
@@ -36,6 +37,8 @@ export default function App() {
 
     socket.on('lobby:update', (lobby) => {
       setLobby(lobby);
+      // Clear history when game resets to lobby so a new round starts fresh
+      if (lobby.phase === 'LOBBY') clearRevealHistory();
     });
 
     socket.on('voting:data', (data) => {
